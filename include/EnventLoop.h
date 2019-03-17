@@ -13,13 +13,14 @@ public:
     EventLoop();
     ~EventLoop();
     void loop();
+    void quit();
     bool isInLoopThread()
     {
         return threadId_ == 0;
     }
 
-    void updateChannel(Channel *channel){}
-    void removeChannel(Channel *channel){}
+    void updateChannel(Channel *channel);
+    // void removeChannel(Channel *channel){}
 
     static EventLoop *getEventLoopOfCurrentThread();
 private:

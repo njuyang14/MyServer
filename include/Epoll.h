@@ -14,16 +14,18 @@ class Epoll {
 public:
     typedef std::vector<std::shared_ptr<Channel> > ChannelList;
     typedef std::vector<struct epoll_event> EventList;
-    typedef std::map<int, Channel *> ChannelMap;
+    typedef std::map<int, std::shared_ptr<Channel> > ChannelMap;
 
     Epoll();
     ~Epoll();
 
     ChannelList poll();
 
-    void epollAdd(std::shared_ptr<Channel> req, int timeout);
+    void epollAdd(Channel *req, int timeout);
     void epollMod(std::shared_ptr<Channel> req, int timeout);
     void epollDel(std::shared_ptr<Channel> req);
+
+    void updateChannel(Channel *channel);
 
 private:
     static const int MAX_FD = 100000;

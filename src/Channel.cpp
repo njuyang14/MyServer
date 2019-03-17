@@ -19,7 +19,7 @@ void Channel::update()
 
 void Channel::handleEvent()
 {
-    if (revents_ == 0) {
+    if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLHUP)) {
         if (readCallBack_ != NULL) {
             readCallBack_();
         }

@@ -2,6 +2,7 @@
 #define _CHANNEL_H_
 
 #include <functional>
+#include <sys/epoll.h>
 
 class EventLoop;
 
@@ -42,7 +43,7 @@ public:
 
     void enableReading()
     {
-        //events_ |= POLLIN|POLLPRI;
+        events_ |= EPOLLIN|EPOLLPRI;
         update();
     }
 

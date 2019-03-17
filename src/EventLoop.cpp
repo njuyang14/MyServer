@@ -6,6 +6,7 @@
 __thread EventLoop *t_loopInThisThread = NULL;
 
 EventLoop::EventLoop() : looping_(false),
+    quit_(true),
     threadId_(0),
     poller_(new Epoll())
 {
@@ -34,7 +35,7 @@ void EventLoop::loop()
         activeChannel_ = poller_->poll();
         for (ChannelList::iterator it = activeChannel_.begin();
             it != activeChannel_.end(); it++) {
-            (*it)->handleEvent();    
+            (*it)->handleEvent();
         }
     }
 
@@ -46,3 +47,16 @@ EventLoop * EventLoop::getEventLoopOfCurrentThread()
 {
     return t_loopInThisThread;
 }
+
+void EventLoop::quit()
+{
+    quit_ = true;
+    // wakeup();
+}
+
+void EventLoop::updateChannel(Channel *channel)
+{
+    poller_->updateChannel(channel);
+    
+}
+

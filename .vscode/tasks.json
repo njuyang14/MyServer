@@ -26,6 +26,14 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "taskName": "compile-test",
+            "command": "g++ -g -Wall -o -std=c++11 testClient test/test_main.cpp",
+            "type": "shell",
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }
