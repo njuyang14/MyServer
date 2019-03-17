@@ -7,5 +7,5 @@ int main(int argc, char *argv[])
 {
     EventLoop mainLoop;
     mainLoop.loop();
-    return 0;
+    pthread_exit(0);
 }
