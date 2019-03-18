@@ -20,8 +20,8 @@ Epoll::ChannelList Epoll::poll()
                                 EPOLLWAIT_TIME);
     ChannelList actChannel;
     for (int i = 0; i < numEvents; i++) {
-        // std::shared_ptr<Channel> channel = std::shared_ptr<Channel>((Channel *)events_[i].data.ptr);
-        Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
+        std::shared_ptr<Channel> channel = channelMap_[events_[i].data.fd];
+        // Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
 
         channel->setRevents(events_[i].events);
         actChannel.push_back(std::shared_ptr<Channel>(channel));
@@ -42,9 +42,14 @@ void Epoll::epollAdd(Channel *req, int timeout)
     event.data.fd = fd; // channel的描述符
     event.events = req->getEvents(); // channel的事件
 
+    if (req != NULL) {
+        channelMap_.insert(std::pair<int, std::shared_ptr<Channel> >(fd, std::shared_ptr<Channel>(req)));
+    }
+
     if(epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &event) < 0)
     {
-        perror("epoll_add error");
+        perror("epoll_add error\n");
+        channelMap_.erase(fd);
     }
     return;
 }

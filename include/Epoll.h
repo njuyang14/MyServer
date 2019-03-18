@@ -31,7 +31,7 @@ private:
     static const int MAX_FD = 100000;
     EventList events_;
     int epollFd_; // epoll_create()
-    ChannelMap channelMap_;
+    ChannelMap channelMap_; // <FD, Channel>
 };
 
 #endif

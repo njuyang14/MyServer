@@ -19,8 +19,8 @@ EventLoop::EventLoop() : looping_(false),
 
 EventLoop::~EventLoop()
 {
-    if (looping_ == false) {
-        printf("EventLoop stops error!");
+    if (looping_ == true) {
+        printf("EventLoop stops error!\n");
     }
     t_loopInThisThread = NULL;
 }

@@ -19,9 +19,9 @@ int main(int argc, char *argv[])
     g_loop = &mainLoop;
 
     int timeFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-    Channel channel(&mainLoop, timeFd);
-    channel.setReadCallBack(timeOut);
-    channel.enableReading();
+    Channel *channel = new Channel(&mainLoop, timeFd);
+    channel->setReadCallBack(timeOut);
+    channel->enableReading();
     
     struct itimerspec howlong;
     bzero(&howlong, sizeof(howlong));
@@ -30,4 +30,5 @@ int main(int argc, char *argv[])
 
     mainLoop.loop();
     // pthread_exit(0);
+    return 0;
 }
