@@ -18,6 +18,9 @@ public:
     {
         return threadId_ == 0;
     }
+    
+    void runInLoop(const std::function<void()> &func);
+    void queueInLoop(const std::function<void()> &func);
 
     void updateChannel(Channel *channel);
     // void removeChannel(Channel *channel){}
@@ -29,6 +32,16 @@ private:
     const pthread_t threadId_;
     std::shared_ptr<Epoll> poller_;
     ChannelList activeChannel_;
+    bool callingPendingFunctor_;
+    int wakeupFd_;
+    std::unique_ptr<Channel> wakeupChannel_;
+    //MutexLock mutex_;
+    std::vector<std::function<void()>> pendingFunctorList_;
+
+    void abortNotInLoopThread(){}
+    void handleRead();
+    void doPendingFunctors();
+    void wakeup();
 };
 
 #endif

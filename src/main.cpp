@@ -29,6 +29,5 @@ int main(int argc, char *argv[])
     timerfd_settime(timeFd, 0, &howlong, NULL);
 
     mainLoop.loop();
-    // pthread_exit(0);
     return 0;
 }

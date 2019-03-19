@@ -18,10 +18,10 @@ Epoll::ChannelList Epoll::poll()
                                 &(*events_.begin()), 
                                 events_.size(),
                                 EPOLLWAIT_TIME);
+    printf("Epoll::poll event num = %d!\n", numEvents);
     ChannelList actChannel;
     for (int i = 0; i < numEvents; i++) {
         std::shared_ptr<Channel> channel = channelMap_[events_[i].data.fd];
-        // Channel *channel = static_cast<Channel *>(events_[i].data.ptr);
 
         channel->setRevents(events_[i].events);
         actChannel.push_back(std::shared_ptr<Channel>(channel));
