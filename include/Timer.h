@@ -12,9 +12,9 @@ public:
     void update();
     bool isOutOfTime();
     size_t getExpiredTime() const
-    { 
+    {
         return expiredTime_; 
-    } 
+    }
 private:
     size_t expiredTime_;
     std::shared_ptr<Channel> channel_;
@@ -34,7 +34,7 @@ public:
     void addTimer(std::shared_ptr<Channel> channel, int timeout);
     void handleExpiredEvent();
 private:
-    std::priority_queue<std::shared_ptr<Timer>, std::vector<std::shared_ptr<Timer> >, TimerCmp> timerQueue;
+    std::priority_queue<std::shared_ptr<Timer>, std::vector<std::shared_ptr<Timer> >, TimerCmp> timerQueue_;
 };
 
 #endif

@@ -22,7 +22,7 @@ public:
     void runInLoop(const std::function<void()> &func);
     void queueInLoop(const std::function<void()> &func);
 
-    void updateChannel(Channel *channel);
+    void updateChannel(std::shared_ptr<Channel> channel);
     // void removeChannel(Channel *channel){}
 
     static EventLoop *getEventLoopOfCurrentThread();
@@ -34,7 +34,7 @@ private:
     ChannelList activeChannel_;
     bool callingPendingFunctor_;
     int wakeupFd_;
-    std::unique_ptr<Channel> wakeupChannel_;
+    std::shared_ptr<Channel> wakeupChannel_;
     //MutexLock mutex_;
     std::vector<std::function<void()>> pendingFunctorList_;
 

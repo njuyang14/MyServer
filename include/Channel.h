@@ -47,11 +47,12 @@ public:
         update();
     }
 
-    //for Poller
+    // for Poller
     int getIndex() const
     {
         return index_;
     }
+    
     void setIndex(int index)
     {
         index_ = index;

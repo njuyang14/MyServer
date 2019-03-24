@@ -30,6 +30,11 @@ EventLoop::EventLoop() : looping_(false),
     } else {
         t_loopInThisThread = this;
     }
+
+    wakeupChannel_->setRevents(EPOLLIN | EPOLLET);
+    // wakeupChannel_->setReadHandler(bind(&EventLoop::handleRead, this));
+    // wakeupChannel_->setConnHandler(bind(&EventLoop::handleConn, this));
+    poller_->epollAdd(wakeupChannel_, 0);
 }
 
 EventLoop::~EventLoop()
@@ -53,6 +58,7 @@ void EventLoop::loop()
             (*it)->handleEvent();
         }
         doPendingFunctors();
+        poller_->handleExpired();
     }
     
     printf("EventLoop stop, pid=%lu\n", threadId_);
@@ -85,7 +91,7 @@ void EventLoop::quit()
     wakeup();
 }
 
-void EventLoop::updateChannel(Channel *channel)
+void EventLoop::updateChannel(std::shared_ptr<Channel> channel)
 {
     poller_->updateChannel(channel);
     

@@ -8,6 +8,7 @@
 
 #include "Channel.h"
 
+class TimerQueue;
 class EventLoop;
 
 class Epoll {
@@ -21,17 +22,19 @@ public:
 
     ChannelList poll();
 
-    void epollAdd(Channel *req, int timeout);
+    void epollAdd(std::shared_ptr<Channel> req, int timeout);
     void epollMod(std::shared_ptr<Channel> req, int timeout);
     void epollDel(std::shared_ptr<Channel> req);
 
-    void updateChannel(Channel *channel);
+    void updateChannel(std::shared_ptr<Channel> channel);
+    void handleExpired();
 
 private:
     static const int MAX_FD = 100000;
     EventList events_;
     int epollFd_; // epoll_create()
     ChannelMap channelMap_; // <FD, Channel>
+    std::shared_ptr<TimerQueue> timerQueue_;
 };
 
 #endif

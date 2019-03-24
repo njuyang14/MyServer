@@ -36,14 +36,14 @@ TimerQueue::~TimerQueue()
 
 void TimerQueue::addTimer(std::shared_ptr<Channel> channel, int timeout)
 {
-    timerQueue.push(std::shared_ptr<Timer>(new Timer(channel, timeout)));
+    timerQueue_.push(std::shared_ptr<Timer>(new Timer(channel, timeout)));
 }
 
 void TimerQueue::handleExpiredEvent()
 {
-    while (!timerQueue.empty()) {
-        if (timerQueue.top()->isOutOfTime()) {
-            timerQueue.pop();
+    while (!timerQueue_.empty()) {
+        if (timerQueue_.top()->isOutOfTime()) {
+            timerQueue_.pop();
         } else {
             break; // 堆顶没有超时事件则堆中都没有
         }

@@ -14,7 +14,7 @@ Channel::~Channel()
 
 void Channel::update()
 {
-    loop_->updateChannel(this);
+    loop_->updateChannel(std::shared_ptr<Channel>(this));
 }
 
 void Channel::handleEvent()

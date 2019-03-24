@@ -1,9 +1,11 @@
 #include "Epoll.h"
+#include "Timer.h"
 
 const int EVENTS_NUM = 4096;
 const int EPOLLWAIT_TIME = 10000;
 
-Epoll::Epoll() : events_(EVENTS_NUM)
+Epoll::Epoll() : events_(EVENTS_NUM),
+    timerQueue_(new TimerQueue())
 {
     epollFd_ = epoll_create1(EPOLL_CLOEXEC);
 }
@@ -29,13 +31,13 @@ Epoll::ChannelList Epoll::poll()
     return actChannel;
 }
 
-void Epoll::updateChannel(Channel *channel)
+void Epoll::updateChannel(std::shared_ptr<Channel> channel)
 {
     epollAdd(channel, 5);
     printf("update interested event\n");
 }
 
-void Epoll::epollAdd(Channel *req, int timeout)
+void Epoll::epollAdd(std::shared_ptr<Channel> req, int timeout)
 {
     int fd = req->getFd();
     struct epoll_event event;
@@ -43,7 +45,8 @@ void Epoll::epollAdd(Channel *req, int timeout)
     event.events = req->getEvents(); // channel的事件
 
     if (req != NULL) {
-        channelMap_.insert(std::pair<int, std::shared_ptr<Channel> >(fd, std::shared_ptr<Channel>(req)));
+        channelMap_.insert(std::pair<int, std::shared_ptr<Channel> >(fd, req));
+        timerQueue_->addTimer(req, timeout);
     }
 
     if(epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &event) < 0)
@@ -52,4 +55,9 @@ void Epoll::epollAdd(Channel *req, int timeout)
         channelMap_.erase(fd);
     }
     return;
+}
+
+void Epoll::handleExpired()
+{
+    timerQueue_->handleExpiredEvent();
 }
