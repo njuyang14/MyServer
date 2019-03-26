@@ -24,5 +24,10 @@ void Channel::handleEvent()
             readCallBack_();
         }
     }
+    if (revents_ & (EPOLLOUT)) {
+        if (writeCallBack_ != NULL) {
+            writeCallBack_();
+        }
+    }
     //...
 }
