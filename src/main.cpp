@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     g_loop = &mainLoop;
 
     int timeFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
-    Channel *channel = new Channel(&mainLoop, timeFd);
+    Channel *channel = new Channel(&mainLoop, timeFd, 0);
     channel->setReadCallBack(timeOut);
     channel->enableReading();
     

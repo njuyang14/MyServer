@@ -57,6 +57,26 @@ void Epoll::epollAdd(std::shared_ptr<Channel> req, int timeout)
     return;
 }
 
+void Epoll::epollMod(std::shared_ptr<Channel> req, int timeout)
+{
+    int fd = req->getFd();
+    struct epoll_event event;
+    event.data.fd = fd;
+    event.events = req->getEvents();
+
+    if (req != NULL) {
+        channelMap_.insert(std::pair<int, std::shared_ptr<Channel> >(fd, req));
+        timerQueue_->addTimer(req, timeout);
+    }
+
+    if(epoll_ctl(epollFd_, EPOLL_CTL_MOD, fd, &event) < 0)
+    {
+        perror("epoll_add error\n");
+        channelMap_.erase(fd);
+    }
+    return;
+}
+
 void Epoll::handleExpired()
 {
     timerQueue_->handleExpiredEvent();

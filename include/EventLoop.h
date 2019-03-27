@@ -21,6 +21,10 @@ public:
     
     void runInLoop(const std::function<void()> &func);
     void queueInLoop(const std::function<void()> &func);
+    
+    void addToPoller(std::shared_ptr<Channel> channel);
+
+    void modToPoller(std::shared_ptr<Channel> channel);
 
     void updateChannel(std::shared_ptr<Channel> channel);
     // void removeChannel(Channel *channel){}

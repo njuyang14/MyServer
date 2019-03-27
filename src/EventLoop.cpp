@@ -23,7 +23,7 @@ EventLoop::EventLoop() : looping_(false),
     poller_(new Epoll()),
     callingPendingFunctor_(false),
     wakeupFd_(createEventfd()),
-    wakeupChannel_(new Channel(this, wakeupFd_))
+    wakeupChannel_(new Channel(this, wakeupFd_, -1))
 {
     if (t_loopInThisThread != NULL) {
         printf("thread has eventloop already!\n");
@@ -31,7 +31,7 @@ EventLoop::EventLoop() : looping_(false),
         t_loopInThisThread = this;
     }
 
-    wakeupChannel_->setRevents(EPOLLIN | EPOLLET);
+    wakeupChannel_->setEvents(EPOLLIN | EPOLLET);
     // wakeupChannel_->setReadHandler(bind(&EventLoop::handleRead, this));
     // wakeupChannel_->setConnHandler(bind(&EventLoop::handleConn, this));
     poller_->epollAdd(wakeupChannel_, 0);
@@ -126,5 +126,15 @@ void EventLoop::wakeup()
     {
         printf("EventLoop::wakeup() writes %d bytes instead of 8", n);
     }
+}
+
+void EventLoop::addToPoller(std::shared_ptr<Channel> channel)
+{
+    poller_->epollAdd(channel, 5);
+}
+
+void EventLoop::modToPoller(std::shared_ptr<Channel> channel)
+{
+    poller_->epollMod(channel, 5);
 }
 

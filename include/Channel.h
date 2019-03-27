@@ -9,7 +9,7 @@ class EventLoop;
 class Channel {
 public:
     typedef std::function<void()> EventCallBack;
-    Channel(EventLoop *eventLoop, int fd);
+    Channel(EventLoop *eventLoop, int fd, int listenFd);
     ~Channel();
 
     void handleEvent();
@@ -25,6 +25,14 @@ public:
     {
         errorCallBack_ = func;
     }
+    void setConnCallBack(const EventCallBack &func)
+    {
+        connectCallBack_ = func;
+    }
+
+    void handleDefaultConnEvent();
+    void handleDefaultReadEvent();
+    void handleDefaultWriteEvent();
 
     int getFd() const
     {
@@ -34,6 +42,11 @@ public:
     int getEvents() const
     {
         return events_;
+    }
+
+    void setEvents(int events)
+    {
+        events_ = events;
     }
 
     void setRevents(int revents)
@@ -68,10 +81,12 @@ private:
     int events_;
     int revents_;
     int index_;
+    int listenFd_;
 
     void update();
     EventCallBack readCallBack_;
     EventCallBack writeCallBack_;
     EventCallBack errorCallBack_;
+    EventCallBack connectCallBack_;
 };
 #endif
