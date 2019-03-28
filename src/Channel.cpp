@@ -26,12 +26,17 @@ void Channel::update()
 
 void Channel::handleEvent()
 {
-    if (revents_ & (EPOLLIN | EPOLLPRI | EPOLLHUP)) {
+    if ((listenFd_ == fd_) && (events_ & (EPOLLIN))) {
+        if (connectCallBack_ != NULL) {
+            connectCallBack_();
+        }
+    }
+    else if (events_ & (EPOLLIN | EPOLLPRI | EPOLLHUP)) {
         if (readCallBack_ != NULL) {
             readCallBack_();
         }
     }
-    if (revents_ & (EPOLLOUT)) {
+    else if (events_ & (EPOLLOUT)) {
         if (writeCallBack_ != NULL) {
             writeCallBack_();
         }
@@ -52,6 +57,7 @@ void Channel::handleDefaultConnEvent()
     newConn->setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, this));
     newConn->setEvents(EPOLLIN | EPOLLPRI);
     loop_->addToPoller(std::shared_ptr<Channel>(this));
+    printf("Channel::handleDefaultConnEvent success!\n");
 }
 
 void Channel::handleDefaultReadEvent()
@@ -64,6 +70,7 @@ void Channel::handleDefaultReadEvent()
         setEvents(EPOLLOUT);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
     }
+    printf("Channel::handleDefaultReadEvent success!\n");
     //TODO:异常处理
 }
 
@@ -77,5 +84,6 @@ void Channel::handleDefaultWriteEvent()
         setEvents(EPOLLIN | EPOLLPRI);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
     }
+    printf("Channel::handleDefaultWriteEvent success!\n");
     //TODO:异常处理
 }
