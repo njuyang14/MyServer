@@ -24,6 +24,7 @@ Epoll::ChannelList Epoll::poll()
     ChannelList actChannel;
     for (int i = 0; i < numEvents; i++) {
         std::shared_ptr<Channel> channel = channelMap_[events_[i].data.fd];
+        printf("Epoll::event fd = %d!\n", events_[i].data.fd);
 
         channel->setEvents(events_[i].events);
         actChannel.push_back(std::shared_ptr<Channel>(channel));

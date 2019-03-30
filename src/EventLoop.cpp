@@ -74,7 +74,7 @@ void EventLoop::doPendingFunctors()
         functors.swap(pendingFunctorList_);
     }
 
-    for (int i = 0; i < functors.size(); i++) {
+    for (size_t i = 0; i < functors.size(); i++) {
         functors[i]();
     }
     callingPendingFunctor_ = false;

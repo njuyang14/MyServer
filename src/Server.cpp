@@ -17,7 +17,7 @@ Server::Server(EventLoop *loop, int port) : loop_(loop),
 void Server::start()
 {
     // 监听listenFd_, 注册进epoll
-    acceptChannel_->setReadCallBack(std::bind(&Channel::handleDefaultConnEvent, acceptChannel_));
+    acceptChannel_->setConnCallBack(std::bind(&Channel::handleDefaultConnEvent, acceptChannel_));
     acceptChannel_->setEvents(EPOLLIN | EPOLLPRI);
     loop_->addToPoller(acceptChannel_);
     started_ = true;
