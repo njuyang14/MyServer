@@ -138,3 +138,8 @@ void EventLoop::modToPoller(std::shared_ptr<Channel> channel)
     poller_->epollMod(channel, 5);
 }
 
+void EventLoop::delToPoller(std::shared_ptr<Channel> channel)
+{
+    poller_->epollDel(channel);
+}
+

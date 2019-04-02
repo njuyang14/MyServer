@@ -78,6 +78,21 @@ void Epoll::epollMod(std::shared_ptr<Channel> req, int timeout)
     return;
 }
 
+void Epoll::epollDel(std::shared_ptr<Channel> req)
+{
+    int fd = req->getFd();
+    struct epoll_event event;
+    event.data.fd = fd;
+    event.events = req->getEvents();
+
+    if(epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, &event) < 0)
+    {
+        perror("epoll_del error\n");
+    }
+    channelMap_.erase(fd);
+    return;
+}
+
 void Epoll::handleExpired()
 {
     timerQueue_->handleExpiredEvent();

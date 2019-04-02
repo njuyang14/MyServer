@@ -35,12 +35,13 @@ int main(int argc, char *argv[])
     inet_pton(AF_INET, IP_ADDRESS, &servAddr.sin_addr);
     char buff[4096];
     memset(buff, '\0', sizeof(buff));
-    char *sendStr = "Hello Server!";
+    char sendStr[1024] = {'H','e','l','l','o',',','s','e','r','v','e','r','\0'};
     
     if (connect(sockfd, (struct sockaddr*)&servAddr, sizeof(servAddr)) == 0)
     {
         setSocketNonBlocking(sockfd);
         ssize_t n = write(sockfd, sendStr, strlen(sendStr));
+        printf("write buff = %s\n", sendStr);
         sleep(1);
         n = read(sockfd, buff, 4096);
         printf("buff = %s\n", buff);

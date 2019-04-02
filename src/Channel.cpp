@@ -41,6 +41,11 @@ void Channel::handleEvent()
             writeCallBack_();
         }
     }
+    else {
+        if (errorCallBack_ != NULL) {
+            errorCallBack_();
+        }
+    }
     //...
 }
 
@@ -55,6 +60,9 @@ void Channel::handleDefaultConnEvent()
     }
     std::shared_ptr<Channel> newConn(new Channel(loop_, acceptFd, listenFd_));
     newConn->setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, newConn));
+    newConn->setWriteCallBack(std::bind(&Channel::handleDefaultWriteEvent, newConn));
+    newConn->setErrorCallBack(std::bind(&Channel::handleDefaultErrorEvent, newConn));
+
     newConn->setEvents(EPOLLIN | EPOLLPRI);
     loop_->addToPoller(std::shared_ptr<Channel>(newConn));
     printf("Channel::handleDefaultConnEvent success, channel fd = %d!\n", newConn->getFd());
@@ -67,7 +75,6 @@ void Channel::handleDefaultReadEvent()
     ssize_t n = readn(fd_, buf, sizeof(buf));
     if (n > 0) {
         printf("read msg: %s\n", buf);
-        setWriteCallBack(std::bind(&Channel::handleDefaultWriteEvent, this));
         setEvents(EPOLLOUT);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
     }
@@ -77,14 +84,19 @@ void Channel::handleDefaultReadEvent()
 
 void Channel::handleDefaultWriteEvent()
 {
-    char *buf = "Hello client";
+    char buf[1024] = {'H','e','l','l','o',',','c','l','i','e','n','t','\0'};
     ssize_t n = writen(fd_, buf, sizeof(buf));
     if (n > 0) {
         printf("write msg: %s\n", buf);
-        setReadCallBack(std::bind(&Channel::handleDefaultWriteEvent, this));
+        // setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, this));
         setEvents(EPOLLIN | EPOLLPRI);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
     }
     printf("Channel::handleDefaultWriteEvent success!\n");
     //TODO:异常处理
+}
+
+void Channel::handleDefaultErrorEvent()
+{
+    loop_->delToPoller(std::shared_ptr<Channel>(this));
 }

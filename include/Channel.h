@@ -33,6 +33,7 @@ public:
     void handleDefaultConnEvent();
     void handleDefaultReadEvent();
     void handleDefaultWriteEvent();
+    void handleDefaultErrorEvent();
 
     int getFd() const
     {

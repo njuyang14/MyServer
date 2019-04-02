@@ -26,6 +26,8 @@ public:
 
     void modToPoller(std::shared_ptr<Channel> channel);
 
+    void delToPoller(std::shared_ptr<Channel> channel);
+
     void updateChannel(std::shared_ptr<Channel> channel);
     // void removeChannel(Channel *channel){}
 
