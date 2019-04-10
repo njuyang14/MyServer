@@ -40,9 +40,10 @@ int main(int argc, char *argv[])
     if (connect(sockfd, (struct sockaddr*)&servAddr, sizeof(servAddr)) == 0)
     {
         setSocketNonBlocking(sockfd);
+
         ssize_t n = write(sockfd, sendStr, strlen(sendStr));
         printf("write buff = %s\n", sendStr);
-        sleep(1);
+        sleep(2);
         n = read(sockfd, buff, 4096);
         printf("buff = %s\n", buff);
         close(sockfd);

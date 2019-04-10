@@ -31,7 +31,7 @@ void Channel::handleEvent()
             connectCallBack_();
         }
     }
-    else if (events_ & (EPOLLIN | EPOLLPRI | EPOLLHUP)) {
+    else if (events_ & (EPOLLIN | EPOLLPRI)) {
         if (readCallBack_ != NULL) {
             readCallBack_();
         }
@@ -59,8 +59,8 @@ void Channel::handleDefaultConnEvent()
         perror("accept error!\n");
     }
     std::shared_ptr<Channel> newConn(new Channel(loop_, acceptFd, listenFd_));
-    newConn->setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, newConn));
     newConn->setWriteCallBack(std::bind(&Channel::handleDefaultWriteEvent, newConn));
+    newConn->setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, newConn));
     newConn->setErrorCallBack(std::bind(&Channel::handleDefaultErrorEvent, newConn));
 
     newConn->setEvents(EPOLLIN | EPOLLPRI);
@@ -77,8 +77,11 @@ void Channel::handleDefaultReadEvent()
         printf("read msg: %s\n", buf);
         setEvents(EPOLLOUT);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
+        printf("Channel::handleDefaultReadEvent success!\n");
+    } else if(n == 0) {
+        loop_->delToPoller(std::shared_ptr<Channel>(this));
+        printf("Channel::client socket close!\n");
     }
-    printf("Channel::handleDefaultReadEvent success!\n");
     //TODO:异常处理
 }
 
@@ -91,12 +94,14 @@ void Channel::handleDefaultWriteEvent()
         // setReadCallBack(std::bind(&Channel::handleDefaultReadEvent, this));
         setEvents(EPOLLIN | EPOLLPRI);
         loop_->modToPoller(std::shared_ptr<Channel>(this));
+        printf("Channel::handleDefaultWriteEvent success!\n");
     }
-    printf("Channel::handleDefaultWriteEvent success!\n");
+    
     //TODO:异常处理
 }
 
 void Channel::handleDefaultErrorEvent()
 {
     loop_->delToPoller(std::shared_ptr<Channel>(this));
+    printf("Channel::handleDefaultErrorEvent success!\n");
 }
