@@ -58,7 +58,7 @@ void EventLoop::loop()
             (*it)->handleEvent();
         }
         doPendingFunctors();
-        poller_->handleExpired();
+        //poller_->handleExpired();
     }
     
     printf("EventLoop stop, pid=%lu\n", threadId_);
